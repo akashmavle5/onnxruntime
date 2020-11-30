@@ -129,12 +129,15 @@ void VerifyOutputs(const Tensor& expected_tensor, const Tensor& actual_tensor, b
     const std::vector<float> expected(expected_tensor.template Data<float>(), expected_tensor.template Data<float>() + size);
     const std::vector<float> actual(actual_tensor.template Data<float>(), actual_tensor.template Data<float>() + size);
     VerifyOutputs<float>(expected, actual, use_threshold_compare, atol, rtol, threshold);
-  } else if (expected_tensor.GetElementType() == ONNX_NAMESPACE::TensorProto_DataType_FLOAT16) {
+  }
+#ifdef USE_CUDA
+  else if (expected_tensor.GetElementType() == ONNX_NAMESPACE::TensorProto_DataType_FLOAT16) {
     const std::vector<MLFloat16> expected(expected_tensor.template Data<MLFloat16>(), expected_tensor.template Data<MLFloat16>() + size);
     const std::vector<MLFloat16> actual(actual_tensor.template Data<MLFloat16>(), actual_tensor.template Data<MLFloat16>() + size);
     VerifyOutputs<MLFloat16>(expected, actual, use_threshold_compare, MLFloat16(math::floatToHalf(atol)),
                              MLFloat16(math::floatToHalf(rtol)), MLFloat16(math::floatToHalf(threshold)));
   }
+#endif
 }
 
 template <typename T>
